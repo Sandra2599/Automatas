@@ -1,10 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Desde esta clase se hace uso de las clases analizador y del automata
+ * permite crear un nuevo automata apartir de un archivo de texto e interacturar con
+ * dicho automata
  */
 package implementar;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -13,45 +14,37 @@ import lectura.LeerArchivo;
 
 /**
  *
- * @author zomby
+ * @author Paulino Salas
  */
 public class Main {
 
-    Analizador analizar;
-    LeerArchivo lectura;
+    private Analizador analizar;
+    private LeerArchivo lectura;
 
-
+    /**
+     * Inicializa la clase LeerArchivo y valida los casos del menu
+     * @param caso Numero de la operacion que desea realizar el usuario
+     */
     public void MenuContinuar(int caso) {
 
-        analizar = new Analizador();
         lectura = new LeerArchivo();
         Scanner entrada = new Scanner(System.in);
-
         String palabra = "";
-
         switch (caso) {
             case 1:
-                System.out.println("Cargar Archivo");
-                 {
-                    try {
-                        lectura.leer(lectura.seleccionArchivo());
-                    } catch (IOException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                palabra = lectura.getPalabra(0);
-
-                if (analizar.analizar(palabra)) {
-                    System.out.println("------------CADENA ACEPTADA-----V------");
-                } else {
-                    System.out.println("------------CADENA RECHAZADA----X-------");
+                System.out.println("Cargar Automata");
+                try {
+                    lectura.leer(lectura.seleccionArchivo()); //lee el archivo que recibe como parametro de la selección
+                    analizar = new Analizador(lectura.getAfd());
+                } catch (IOException ex) {
                 }
                 break;
             case 2:
+                analizar = new Analizador();
                 System.out.println("Escribir cadena");
                 palabra = entrada.nextLine();
-                if (analizar.analizar(palabra)) {
-                    System.out.println("------------CADENA ACEPTADA-----V------");
+                if (analizar.analizar(palabra)) {//validando si la cadena es aceptada o rechazada
+                    System.out.println("------------CADENA ACEPTADA-----------");
                 } else {
                     System.out.println("------------CADENA RECHAZADA----X-------");
                 }
@@ -68,10 +61,15 @@ public class Main {
         System.out.println(palabra);
     }
 
+    /**
+     * Inicia el programa muestra el menu y no termina hasta que el usuario lo 
+     * finalice
+     */
     public void init() {
         Scanner entrada = new Scanner(System.in);
+
         while (true) {
-            System.out.println("1: Agregar Archivo \n2: Escribir Cadena \n3: salir");
+            System.out.println("1: Agregar Automata \n2: Escribir Cadena \n3: salir");
             int caso = entrada.nextInt();
             MenuContinuar(caso);
         }
